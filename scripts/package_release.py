@@ -7,7 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 STATIC = [
-    'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'CHANGELOG.md', 'VERSION',
+    'README.md', 'README.en.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'CHANGELOG.md', 'VERSION',
     'requirements.txt', 'Install.ps1', 'Launch.vbs', 'Stop.vbs', '.gitignore',
     '.gitattributes', '.github/workflows/tests.yml', 'examples/settings.example.json',
     'docs/DEVELOPMENT.md', 'docs/RELEASING.md', 'docs/HANDOFF.md', 'docs/styles.png',
