@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "interval": 300,
+  "follow": true,
+  "offset_x": 0,
+  "offset_y": 0,
+  "theme": "auto",
+  "color_theme": "cream",
+  "density": "standard",
+  "accessory_style": "dial",
+  "accessory_side": "auto",
+  "text_tone": "light",
+  "accessory_gap": 4,
+  "layout_mode": "split",
+  "visible_sides": "both",
+  "swap_sides": false,
+  "mirror_accessories": false,
+  "quota_colors": "paired",
+  "auto_start": false
+}
