@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def main():
     commands=[['-B','-m','unittest','discover','-s','tests'],
+              ['-B','scripts/verify_demo_privacy.py'],
               ['-B','scripts/verify_menu_scaling.py'],
               ['-B','scripts/verify_dpi_stability.py'],
               ['-B','scripts/verify_alpha_recovery.py'],

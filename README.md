@@ -4,9 +4,13 @@
 
 Windows 桌面宠物的轻量用量配件：查看 Codex 剩余额度和重置时间，让羽毛、表盘或小饰品跟随宠物移动。
 
-这是独立运行的社区桌面配件，并非 OpenAI 官方产品，也不是通过 Codex 插件市场安装的插件。它不修改 Codex 安装文件、不替换宠物、不包含宠物角色素材。
+这是独立运行的社区桌面配件，并非 OpenAI 官方产品，也不是通过 Codex 插件市场安装的插件。它不修改 Codex 安装文件、不替换宠物。便携程序不包含宠物素材；下面的演示图使用已署名的公开参考宠物。
 
-![七种配件，使用模拟额度](docs/styles.png)
+![参考宠物与左右轻羽配件，全部为虚拟额度](docs/demo-pet-accessories.png)
+
+演示图在独立窗口中生成，使用虚拟额度，不是作者的桌面截图。参考宠物为 HanaAyane / 小蕾米的 Remielle Codex Pet，原出处与使用条款见本文末尾。
+
+**[下载 Windows 免装 Python 便携版](https://github.com/am-q/codex-pet-accessories/releases/download/v0.3.0/codex-pet-accessories-0.3.0-windows-x64.zip)** · [发布页面](https://github.com/am-q/codex-pet-accessories/releases/latest)
 
 ## 功能
 
@@ -23,19 +27,33 @@ Windows 桌面宠物的轻量用量配件：查看 Codex 剩余额度和重置�
 
 ## 运行要求
 
-- Windows 10 / 11 桌面会话。目前仅支持 Windows。
-- Python 3.12 或更新版本，包含 Tcl/Tk。当前验证环境为 Python 3.12。
-- Pillow 12.3.0，安装步骤会从 Python 包索引获取。
+- Windows 10 / 11，64 位 x64，桌面会话。目前仅支持 Windows。
+- 便携版已包含 Python、Tcl/Tk 和 Pillow，无需另外安装 Python。
 - 已安装、登录 Codex 桌面应用，并显示宠物。
 - 本机能运行 `codex app-server --stdio`；程序先从 PATH 查找 `codex`，再查找 `%LOCALAPPDATA%\OpenAI\Codex\bin\*\codex.exe`。
 
-## 下载
+## 下载与双击启动
 
-[下载当前源码 ZIP](https://github.com/am-q/codex-pet-accessories/archive/refs/heads/main.zip)，或在仓库页面选择 **Code → Download ZIP**。解压后进入包含 `Install.ps1` 和 `Launch.vbs` 的项目文件夹。
+1. [下载 Windows x64 便携 ZIP](https://github.com/am-q/codex-pet-accessories/releases/download/v0.3.0/codex-pet-accessories-0.3.0-windows-x64.zip)。
+2. 将 ZIP **完整解压**到一个文件夹。
+3. 打开并登录 Codex，显示桌面宠物。
+4. 双击 **CodexPetAccessories.exe**。点击或右键配件即可打开设置，从菜单退出。
 
-目前提供需要 Python 的源码版。宠物配件与宠物本体分别安装；宠物原项目和参考来源见本文最后的「致谢与参考来源」。
+不需要运行安装脚本或安装 Python。启用“随宠物自动启停”后，请保留程序文件夹的位置；移动前先关闭该开关。升级前退出旧版。
 
-## 安装和启动
+宠物配件与宠物本体分别安装；宠物原项目和参考来源见本文最后的「致谢与参考来源」。[发布页面](https://github.com/am-q/codex-pet-accessories/releases/latest)同时提供源码包与 SHA256 校验值。
+
+## 界面预览
+
+![实际样式与位置设置面板，使用虚拟数据和独立演示配置](docs/demo-settings.png)
+
+右侧为应用实际的「样式与位置」面板，可滚动查看其余选项。额度、套餐和日期均为示例；截图过程不读取个人设置、账户数据或真实宠物状态。生成方式及素材版本见[演示图来源](docs/SCREENSHOT_SOURCES.md)。界面当前使用中文，英文说明中提供菜单含义。
+
+![七种配件，使用模拟额度](docs/styles.png)
+
+## 源码版安装（开发者可选）
+
+便携版用户无需执行本节。[下载当前源码 ZIP](https://github.com/am-q/codex-pet-accessories/archive/refs/heads/main.zip)，或选择 **Code → Download ZIP**。源码版需要 Python 3.12 或更新版本（包含 Tcl/Tk）与 Pillow 12.3.0，当前验证环境为 Python 3.12。
 
 下载或克隆本仓库，在项目目录打开 PowerShell：
 
@@ -119,7 +137,7 @@ py -3 -m venv .venv
 .\.venv\Scripts\python.exe .\src\pet_base.py --smoke
 ```
 
-`--demo` 和 `--smoke` 使用模拟用量，不查询账号；普通单元测试也不访问账号。界面检查需要 Windows 桌面会话。[GitHub Actions](https://github.com/am-q/codex-pet-accessories/actions) 会执行单元测试、Windows 界面回归与源码打包；首次仓库上传已通过完整检查，后续结果可在该页面查看。
+`--demo` 和 `--smoke` 使用模拟用量，不读取个人设置、不查询账号；普通单元测试也不访问账号。界面检查需要 Windows 桌面会话。[GitHub Actions](https://github.com/am-q/codex-pet-accessories/actions) 执行单元测试、Windows 界面回归与打包。便携发布还会在移除 Python 环境变量和搜索路径的条件下解压并运行 EXE，验证实际发布包。
 
 当前本地测试覆盖额度解析、退避、菜单定位、七种绘制、可见边缘定位、左右换侧和高 DPI 渲染。混合缩放多屏、特殊宠物动画和未来 Codex 版本仍需实际使用检验。
 
@@ -127,12 +145,12 @@ py -3 -m venv .venv
 
 ## 许可
 
-项目自身代码使用 [MIT License](LICENSE)。第三方依赖保留各自许可，见 [第三方说明](THIRD_PARTY_NOTICES.md)。不包含任何宠物角色图片；请自行安装有权使用的宠物素材。
+项目自身代码使用 [MIT License](LICENSE)。第三方依赖保留各自许可，便携包附带许可文本，见 [第三方说明](THIRD_PARTY_NOTICES.md)。演示图中的宠物角色属于第三方素材，不适用本项目 MIT 许可。便携程序不安装宠物，请自行安装有权使用的宠物素材。
 
 ## 致谢与参考来源
 
-- **参考宠物项目**：[Remielle Codex Pet（小蕾米）](https://github.com/HanaAyane/remielle-codex-pet)，作者 **HanaAyane / 小蕾米**。本配件开发时使用、参考了该宠物项目；需要宠物本体时，请前往原项目查看下载与安装说明。
+- **演示图与参考宠物项目**：[Remielle Codex Pet（小蕾米）](https://github.com/HanaAyane/remielle-codex-pet)，作者 **HanaAyane / 小蕾米**。两张演示图使用该公开项目的首帧角色，具体版本见[演示图来源](docs/SCREENSHOT_SOURCES.md)；需要宠物本体时，请前往原项目查看下载与安装说明。
 - **原始角色与素材来源**：原宠物项目在其 [NOTICE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/NOTICE.md) 中注明，部分素材和动作参考来自米哈游 / HoYoverse 的[《绝区零》官方活动页面](https://act.mihoyo.com/zzz/event/e20260717reserve-pvy5cf/index.html)，并经过 AI 辅助重绘、人工整理与编辑。
 - **轻羽外观参考**：本项目的羽毛由曲线代码绘制，配色与形态另参考[《绝区零》官方角色设定页面](https://zenless.hoyoverse.com/zh-cn/news/165319)。
 
-本仓库只提供独立用量配件及模拟数据预览，不打包原宠物的角色图、GIF 或精灵图。原宠物素材的使用范围见其 [ASSET-USAGE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/ASSET-USAGE.md) 和 [NOTICE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/NOTICE.md)；本配件的 MIT 许可不替代原项目及相关权利人的素材使用条款。
+本仓库包含两张使用公开参考宠物的非商业演示图；便携程序不打包角色图、GIF 或精灵图。原宠物素材的使用范围见其 [ASSET-USAGE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/ASSET-USAGE.md) 和 [NOTICE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/NOTICE.md)；本配件的 MIT 许可不替代原项目及相关权利人的素材使用条款。

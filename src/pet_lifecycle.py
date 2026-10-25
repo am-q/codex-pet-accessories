@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 import traceback
+from runtime_support import resource_path, startup_launcher, external_process_environment
 
 _crash_stream=None
 
@@ -59,14 +60,17 @@ def task_name(data):
     return 'CodexPetAccessories-'+hashlib.sha256(key).hexdigest()[:12]
 
 def configure_auto_start(data,script,enabled):
-    helper=Path(__file__).with_name('pet_lifecycle_task.ps1')
-    pythonw=Path(sys.executable).with_name('pythonw.exe')
-    if not pythonw.exists():raise RuntimeError('未找到后台启动所需的 pythonw.exe')
-    result=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-WindowStyle','Hidden',
+    helper=resource_path('pet_lifecycle_task.ps1')
+    executable,source_script=startup_launcher(script)
+    command=['powershell.exe','-NoProfile','-NonInteractive','-WindowStyle','Hidden',
         '-ExecutionPolicy','Bypass','-File',str(helper),'-Mode','enable' if enabled else 'disable',
-        '-TaskName',task_name(data),'-Python',str(pythonw),'-Script',str(Path(script).resolve()),
-        '-DataDir',str(Path(data).resolve())],capture_output=True,text=True,encoding='utf-8',errors='replace',
-        timeout=20,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+        '-TaskName',task_name(data),'-Python',str(executable),
+        '-DataDir',str(Path(data).resolve())]
+    if source_script is None:command+=['-Standalone']
+    else:command+=['-Script',str(source_script)]
+    with external_process_environment() as environment:
+        result=subprocess.run(command,capture_output=True,text=True,encoding='utf-8',errors='replace',
+            timeout=20,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0),env=environment)
     if result.returncode:
         log_event(data,'auto_start_config_failed',enabled=enabled)
         raise RuntimeError('自动启停设置未成功保存，请查看 Windows 计划任务权限。')

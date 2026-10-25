@@ -26,6 +26,7 @@ from dpi_policy import initialize_native_dpi, position_logical_window
 from appearance import palette, visible_quotas
 from accessory_layout import plan_accessories
 from accessories import STYLES, CELL_WIDTH, HEIGHT, side_position, render_accessories, ink_insets
+from runtime_support import application_version, emit_report, resource_path, standalone, startup_launcher
 
 HERE = Path(__file__).resolve().parent
 DATA = Path(os.environ.get('CODEX_PET_DATA_DIR') or (Path(os.environ.get('LOCALAPPDATA', str(Path.home()))) / 'CodexPetAccessories'))
@@ -58,8 +59,9 @@ class App:
     @native_ui
     def __init__(self, root, demo=False):
         self.root, self.demo = root, demo
-        self.settings = {**DEFAULTS, **load_json(DATA / 'settings.json', {})}
-        if load_json(DATA / 'settings.json', {}).get('version') != 2:
+        saved_settings = {} if demo else load_json(DATA / 'settings.json', {})
+        self.settings = {**DEFAULTS, **saved_settings}
+        if saved_settings.get('version') != 2:
             self.settings.update(version=2,follow=True,offset_x=0,offset_y=0)
             if not demo:
                 save_json(DATA/'settings.json',self.settings)
@@ -402,7 +404,7 @@ class App:
 
     @native_ui
     def follow(self):
-        state=self.pet.read()
+        state=None if self.demo else self.pet.read()
         if not self.demo:state=self.tracker.update(state)
         self.current_state=state
         visible=self.demo or not self.settings['follow'] or (bool(state and state['open']) and self.codex_alive)
@@ -575,6 +577,7 @@ def main():
     global DATA
     parser=argparse.ArgumentParser()
     parser.add_argument('--data-dir')
+    parser.add_argument('--report',help='Write a diagnostic result to an explicit JSON file')
     parser.add_argument('--auto-start',action='store_true')
     parser.add_argument('--configure-auto-start',choices=('on','off'))
     parser.add_argument('--stop',action='store_true')
@@ -590,7 +593,7 @@ def main():
         settings=load_json(DATA/'settings.json',{});settings['auto_start']=enabled
         save_json(DATA/'settings.json',settings)
         if args.stop:(DATA/'stop.flag').write_text('user-stop',encoding='utf-8')
-        print(json.dumps({'auto_start':enabled,'configured':True}));return
+        emit_report({'auto_start':enabled,'configured':True},args.report);return
     if args.auto_start:
         settings=load_json(DATA/'settings.json',{})
         if not should_auto_start(settings,desktop_running(),PetState().read()):return
@@ -598,7 +601,7 @@ def main():
     if args.check:
         start=time.monotonic()
         data=read_usage()
-        print(json.dumps({'query_seconds':round(time.monotonic()-start,2),**data},ensure_ascii=False))
+        emit_report({'query_seconds':round(time.monotonic()-start,2),**data},args.report)
         return
     initialize_native_dpi()
     mutex=None
@@ -617,7 +620,7 @@ def main():
     if app.closed:return
     if not (args.demo or args.smoke or args.preview):
         def record_startup():
-            save_json(DATA/'startup.json', {'version':'0.2.0','accessory_style':app.settings['accessory_style'],'accessory_side':app.actual_side,'color_theme':app.settings.get('color_theme'),'density':app.settings.get('density'),'renderer':'supersampled-per-pixel-alpha','pixel_size':app.surface.pixel_size,'pid':os.getpid(),'started_at':time.time(),'visible':bool(root.winfo_viewable()),'x':logical_window_position(root)[0],'y':logical_window_position(root)[1],'placement':app.placement,'panels':[dict(side=p['side'],x=p['x'],y=p['y'],cycles=len(p['quotas'])) for p in app.layout_plan],'tracking':app.tracker.mode,'follow':app.settings['follow']})
+            save_json(DATA/'startup.json', {'version':application_version(),'accessory_style':app.settings['accessory_style'],'accessory_side':app.actual_side,'color_theme':app.settings.get('color_theme'),'density':app.settings.get('density'),'renderer':'supersampled-per-pixel-alpha','pixel_size':app.surface.pixel_size,'pid':os.getpid(),'started_at':time.time(),'visible':bool(root.winfo_viewable()),'x':logical_window_position(root)[0],'y':logical_window_position(root)[1],'placement':app.placement,'panels':[dict(side=p['side'],x=p['x'],y=p['y'],cycles=len(p['quotas'])) for p in app.layout_plan],'tracking':app.tracker.mode,'follow':app.settings['follow']})
         root.after(1200,record_startup)
     if args.preview:
         root.overrideredirect(False)
@@ -646,7 +649,10 @@ def main():
             root.update_idletasks()
             assert menu.panel_size[1]<=560,menu.panel_size
             menu.close()
-            print(json.dumps({'ui':'ok','styles':list(STYLES),'geometry':root.geometry(),'desktop_running':desktop_running()},ensure_ascii=False))
+            emit_report({'ui':'ok','styles':list(STYLES),'geometry':root.geometry(),
+                         'version':application_version(),'standalone':standalone(),
+                         'scheduler_resource':resource_path('pet_lifecycle_task.ps1').is_file(),
+                         'auto_start_uses_executable':standalone() and startup_launcher(HERE/'pet_base.py')[1] is None},args.report)
             app.close()
         root.after(600,smoke)
     root.mainloop()

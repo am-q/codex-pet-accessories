@@ -11,6 +11,7 @@ import subprocess
 import threading
 import time
 from query_process_guard import QueryProcessGuard
+from runtime_support import external_process_environment
 
 ALLOWED_METHODS = frozenset({'initialize', 'initialized', 'account/rateLimits/read'})
 
@@ -66,11 +67,12 @@ def normalize_account_meta(payload):
 def read_usage(timeout=30, cancel=None):
     """A short-lived official app-server; no credentials copied or logged."""
     flags = getattr(subprocess, 'CREATE_NO_WINDOW', 0)
-    proc = subprocess.Popen(
-        [codex_executable(), 'app-server', '--stdio'],
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-        text=True, encoding='utf-8', creationflags=flags,
-    )
+    with external_process_environment() as environment:
+        proc = subprocess.Popen(
+            [codex_executable(), 'app-server', '--stdio'],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            text=True, encoding='utf-8', creationflags=flags, env=environment,
+        )
     guard = QueryProcessGuard(proc)
     inbox = queue.Queue()
     def receive():

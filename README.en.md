@@ -4,9 +4,13 @@
 
 A lightweight Windows companion that displays Codex usage limits and reset times beside your desktop pet. Choose a feather, dial, or another small accessory and let it follow the pet as it moves.
 
-This is an independent community application. It is not an official OpenAI product or a plugin installed through the Codex plugin marketplace. It does not modify the Codex installation, replace your pet, or include character artwork.
+This is an independent community application, not an official OpenAI product or a plugin installed through the Codex plugin marketplace. It does not modify Codex or replace your pet. The portable application contains no pet artwork; the demonstrations below use a credited public reference pet.
 
-![Seven accessory styles with simulated usage data](docs/styles.png)
+![Reference pet with feather accessories and entirely simulated usage](docs/demo-pet-accessories.png)
+
+This demonstration was generated in a separate window with synthetic usage data. It is not a screenshot of the author's desktop. The reference pet is Remielle Codex Pet by HanaAyane / 小蕾米; original sources and usage terms are credited at the end of this guide.
+
+**[Download the Windows portable edition — no Python installation](https://github.com/am-q/codex-pet-accessories/releases/download/v0.3.0/codex-pet-accessories-0.3.0-windows-x64.zip)** · [Release page](https://github.com/am-q/codex-pet-accessories/releases/latest)
 
 ## Features
 
@@ -23,19 +27,33 @@ This is an independent community application. It is not an official OpenAI produ
 
 ## Requirements
 
-- Windows 10 or Windows 11 with an interactive desktop session. Windows is currently the only supported platform.
-- Python 3.12 or later, including Tcl/Tk. Python 3.12 is the tested version.
-- Pillow 12.3.0, installed from the Python package index during setup.
+- Windows 10 or Windows 11, 64-bit x64, with an interactive desktop session.
+- The portable edition includes Python, Tcl/Tk, and Pillow. You do not need to install Python.
 - The Codex desktop application installed and signed in, with a desktop pet visible.
 - A working local `codex app-server --stdio` command. The application checks PATH first, then `%LOCALAPPDATA%\OpenAI\Codex\bin\*\codex.exe`.
 
-## Download
+## Download and double-click to start
 
-[Download the current source ZIP](https://github.com/am-q/codex-pet-accessories/archive/refs/heads/main.zip), or choose **Code → Download ZIP** on the repository page. Extract the archive and open the project folder containing `Install.ps1` and `Launch.vbs`.
+1. [Download the Windows x64 portable ZIP](https://github.com/am-q/codex-pet-accessories/releases/download/v0.3.0/codex-pet-accessories-0.3.0-windows-x64.zip).
+2. **Extract the entire ZIP** to a folder.
+3. Open Codex, sign in, and show your desktop pet.
+4. Double-click **CodexPetAccessories.exe**. Click or right-click an accessory for settings, and exit from its menu.
 
-This is a Python source distribution. Install your desktop pet separately; the reference pet and its original sources are credited at the end of this guide.
+No setup script or separate Python installation is needed. Keep the application folder in place if automatic startup is enabled; disable that setting before moving the folder. Exit an older copy before upgrading.
 
-## Install and start
+Install your desktop pet separately; its original sources are credited below. The [release page](https://github.com/am-q/codex-pet-accessories/releases/latest) also provides the source archive and SHA256 checksums.
+
+## Interface preview
+
+![Actual appearance settings panel with isolated demo settings and synthetic data](docs/demo-settings.png)
+
+The right side shows the application's actual **样式与位置** (Appearance and position) panel. Scroll it for more options. Usage, plan, and date values are examples; screenshot generation does not read personal settings, account data, or real pet state. See [Demonstration sources](docs/SCREENSHOT_SOURCES.md) for the generation method and pinned asset version. The UI currently uses Chinese; English menu explanations are included below.
+
+![Seven accessory styles with simulated usage data](docs/styles.png)
+
+## Source installation (optional, for developers)
+
+Portable users can skip this section. [Download the current source ZIP](https://github.com/am-q/codex-pet-accessories/archive/refs/heads/main.zip), or choose **Code → Download ZIP**. The source edition needs Python 3.12 or later with Tcl/Tk and Pillow 12.3.0. Python 3.12 is the tested version.
 
 Open PowerShell in the extracted project folder and run:
 
@@ -121,7 +139,7 @@ Authentication is handled by the local Codex process. The accessory does not dir
 .\.venv\Scripts\python.exe .\src\pet_base.py --smoke
 ```
 
-Demo mode, smoke checks, and ordinary unit tests use simulated usage data and do not query an account. GUI checks need a Windows desktop session. [GitHub Actions](https://github.com/am-q/codex-pet-accessories/actions) runs unit tests, Windows GUI regressions, and source packaging. The initial repository upload passed the complete workflow; subsequent results are listed on that page.
+Demo mode and smoke checks use simulated usage without reading personal settings or querying an account; ordinary unit tests do not access accounts either. GUI checks need a Windows desktop session. [GitHub Actions](https://github.com/am-q/codex-pet-accessories/actions) runs unit tests, Windows GUI regressions, and packaging. Portable releases are also extracted and launched with Python environment variables removed and Python absent from PATH to verify the actual ZIP.
 
 Tests cover usage parsing, retry backoff, menu placement, the seven accessory styles, visible-edge positioning, split layouts, and high-DPI rendering. Mixed-DPI monitors, unusual pet animations, and future Codex versions still need real-world verification.
 
@@ -129,12 +147,12 @@ Additional maintainer documentation is currently in Chinese: [Development](docs/
 
 ## License
 
-The accessory's own code is available under the [MIT License](LICENSE). Dependencies retain their respective licenses; see [Third-party notices](THIRD_PARTY_NOTICES.md). Pet character artwork is not included.
+The accessory's own code is available under the [MIT License](LICENSE). Dependencies retain their licenses, included in the portable ZIP; see [Third-party notices](THIRD_PARTY_NOTICES.md). The third-party pet character in the demonstration images is excluded from the MIT license. The application does not install a pet.
 
 ## Credits and original sources
 
-- **Reference pet:** [Remielle Codex Pet / 小蕾米](https://github.com/HanaAyane/remielle-codex-pet), by **HanaAyane / 小蕾米**. This was the pet used and referenced while developing the accessory. Visit the original project for the pet's downloads and installation instructions.
+- **Demonstration and reference pet:** [Remielle Codex Pet / 小蕾米](https://github.com/HanaAyane/remielle-codex-pet), by **HanaAyane / 小蕾米**. Both demonstration images use its public first-frame artwork; see [Demonstration sources](docs/SCREENSHOT_SOURCES.md) for the pinned version. Visit the original project for the pet's downloads and installation instructions.
 - **Original character and visual material:** the pet project's [NOTICE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/NOTICE.md) credits a [Zenless Zone Zero official event page](https://act.mihoyo.com/zzz/event/e20260717reserve-pvy5cf/index.html) by miHoYo / HoYoverse. The original project describes AI-assisted redrawing, manual organization, and editing of its derived material.
 - **Feather appearance:** the accessory's feather is drawn with this project's curve code; its palette and shape also reference the [official Zenless Zone Zero character design page](https://zenless.hoyoverse.com/zh-cn/news/165319).
 
-This repository distributes only the independent usage accessory and previews with simulated data. It does not bundle the original pet's character images, GIFs, or sprite sheets. The pet's material is subject to its [ASSET-USAGE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/ASSET-USAGE.md) and [NOTICE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/NOTICE.md); the accessory's MIT license does not replace those terms or the original rights holders' rights.
+This repository includes two noncommercial demonstration images containing the public reference pet. The portable application does not bundle character images, GIFs, or sprite sheets. The pet's material is subject to its [ASSET-USAGE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/ASSET-USAGE.md) and [NOTICE.md](https://github.com/HanaAyane/remielle-codex-pet/blob/main/NOTICE.md); the accessory's MIT license does not replace those terms or the original rights holders' rights.

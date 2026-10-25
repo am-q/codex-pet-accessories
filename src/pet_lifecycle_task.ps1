@@ -1,6 +1,7 @@
 param(
     [ValidateSet('enable','disable')][string]$Mode,
-    [string]$TaskName,[string]$Python,[string]$Script,[string]$DataDir
+    [string]$TaskName,[string]$Python,[string]$Script,[string]$DataDir,
+    [switch]$Standalone
 )
 $ErrorActionPreference='Stop'
 $petService=New-Object -ComObject 'Schedule.Service'
@@ -31,8 +32,13 @@ $petLogon=$petTask.Triggers.Create(9)
 $petLogon.UserId=$petSid
 $petAction=$petTask.Actions.Create(0)
 $petAction.Path=$Python
-$petAction.Arguments='"'+$Script+'" --auto-start --data-dir "'+$DataDir+'"'
-$petAction.WorkingDirectory=Split-Path -LiteralPath $Script
+if ($Standalone) {
+    $petAction.Arguments='--auto-start --data-dir "'+$DataDir+'"'
+    $petAction.WorkingDirectory=Split-Path -LiteralPath $Python
+} else {
+    $petAction.Arguments='"'+$Script+'" --auto-start --data-dir "'+$DataDir+'"'
+    $petAction.WorkingDirectory=Split-Path -LiteralPath $Script
+}
 $null=$petFolder.RegisterTaskDefinition($TaskName,$petTask,6,$petSid,$null,3)
 Write-Output $TaskName
 
